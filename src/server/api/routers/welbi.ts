@@ -1,10 +1,5 @@
-import { z } from "zod";
 import axios from "axios";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { getServerAuthSession } from "~/server/auth";
 
 const fetchResidents = async () => {
@@ -23,7 +18,7 @@ const fetchResidents = async () => {
 };
 
 export const welbiRouter = createTRPCRouter({
-  fetchResidents: publicProcedure.query(async () => {
+  fetchResidents: protectedProcedure.query(async () => {
     return await fetchResidents();
   }),
 });
