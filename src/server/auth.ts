@@ -6,9 +6,11 @@ import {
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
 import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
+import { fetchUserByEmailAndPassword } from "./api/trpc";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -20,15 +22,34 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
+      email: string;
+      token: string;
       // role: UserRole;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    id: string;
+    email: string;
+    token: string;
+    // ...other properties
+    // role: UserRole;
+  }
+}
+
+async function fetchAuthToken(email: string): Promise<string | null> {
+  const response = await fetch("https://welbi.org/api/start", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    return data.token;
+  }
+
+  return null;
 }
 
 /**
@@ -38,20 +59,65 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    async session({ session, token }) {
+      if (token) {
+        session.user = {
+          ...session.user,
+          id: token.user.id,
+          token: token.token, // Add token to session
+        };
+      }
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = {
+          id: user.id,
+        };
+        token.token = user.token;
+      }
+      return token;
+    },
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+  },
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
   },
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: {
+          label: "Email",
+          type: "text",
+          placeholder: "your-email@example.com",
+        },
+      },
+      async authorize(credentials, req) {
+        if (credentials) {
+          const user = await fetchUserByEmailAndPassword(credentials.email);
+          if (user) {
+            const token = await fetchAuthToken(user.email);
+            if (token) {
+              return {
+                ...user,
+                token,
+              };
+            }
+          }
+        }
+        return null;
+      },
     }),
+    // DiscordProvider({
+    //   clientId: env.DISCORD_CLIENT_ID,
+    //   clientSecret: env.DISCORD_CLIENT_SECRET,
+    // }),
+
     /**
      * ...add more providers here.
      *

@@ -106,3 +106,26 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
+
+// This is an example. Replace it with your own user fetching logic.
+export async function fetchUserByEmailAndPassword(email: string) {
+  if (email !== "brayschurman@icloud.com") {
+    return null;
+  }
+
+  const user = {
+    id: 12345,
+    name: "Bray",
+    email: "brayschurman@icloud.com",
+  };
+
+  if (!user) {
+    return null;
+  }
+
+  return {
+    id: user.email,
+    name: user.name,
+    email: user.email,
+  };
+}

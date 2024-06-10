@@ -1,48 +1,39 @@
 import Link from "next/link";
-
-import { CreatePost } from "~/app/_components/create-post";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
+interface Resident {
+  id: number;
+  name: string;
+  firstName: string;
+  lastName: string;
+  preferredName: string;
+  status: string;
+  room: string;
+  levelOfCare: string;
+  ambulation: string;
+  birthDate: string;
+  moveInDate: string;
+  createdAt: string;
+  updatedAt: string;
+  applicantId: number | null;
+  attendance: any[];
+}
+
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
   const session = await getServerAuthSession();
+
+  const residents = await api.welbi.fetchResidents();
+
+  console.log("Residents:", residents);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+          Welbi <span className="text-[hsl(280,100%,70%)]">T3</span> App
         </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-            <div className="text-lg">
-              Just the basics - Everything you need to know to set up your
-              database and authentication.
-            </div>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <div className="text-lg">
-              Learn more about Create T3 App, the libraries it uses, and how to
-              deploy it.
-            </div>
-          </Link>
-        </div>
         <div className="flex flex-col items-center gap-2">
-          <p className="text-2xl text-white">
-            {hello ? hello.greeting : "Loading tRPC query..."}
-          </p>
-
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-center text-2xl text-white">
               {session && <span>Logged in as {session.user?.name}</span>}
@@ -56,27 +47,81 @@ export default async function Home() {
           </div>
         </div>
 
-        <CrudShowcase />
+        <div className="w-full max-w-4xl">
+          <h2 className="mb-4 text-2xl">Residents</h2>
+          <div className="overflow-x-auto">
+            <div className="inline-block min-w-full align-middle">
+              <div className="overflow-hidden shadow">
+                <table className="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-600">
+                  <thead className="bg-gray-100 dark:bg-gray-700">
+                    <tr>
+                      <th
+                        scope="col"
+                        className="p-4 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400"
+                      >
+                        Name
+                      </th>
+                      <th
+                        scope="col"
+                        className="p-4 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400"
+                      >
+                        Preferred Name
+                      </th>
+                      <th
+                        scope="col"
+                        className="p-4 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400"
+                      >
+                        Status
+                      </th>
+                      <th
+                        scope="col"
+                        className="p-4 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400"
+                      >
+                        Room
+                      </th>
+                      <th
+                        scope="col"
+                        className="p-4 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400"
+                      >
+                        Level of Care
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+                    {residents?.map((resident: Resident) => (
+                      <tr
+                        key={resident.id}
+                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                          {resident.firstName} {resident.lastName}
+                        </td>
+                        <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                          {resident.preferredName}
+                        </td>
+                        <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center">
+                            <div
+                              className={`mr-2 h-2.5 w-2.5 rounded-full ${resident.status === "HERE" ? "bg-green-400" : "bg-red-500"}`}
+                            ></div>
+                            {resident.status}
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                          {resident.room}
+                        </td>
+                        <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                          {resident.levelOfCare}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
-  );
-}
-
-async function CrudShowcase() {
-  const session = await getServerAuthSession();
-  if (!session?.user) return null;
-
-  const latestPost = await api.post.getLatest();
-
-  return (
-    <div className="w-full max-w-xs">
-      {latestPost ? (
-        <p className="truncate">Your most recent post: {latestPost.name}</p>
-      ) : (
-        <p>You have no posts yet.</p>
-      )}
-
-      <CreatePost />
-    </div>
   );
 }
