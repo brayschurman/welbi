@@ -131,20 +131,27 @@ const attendProgram = async (programId: number, residentId: number) => {
     throw error;
   }
 };
-
 const sendRepositoryLink = async (): Promise<unknown> => {
+  const session = await getServerAuthSession();
+  if (!session?.user?.token) {
+    throw new Error("No token specified");
+  }
+
   const repositoryUrl = "https://github.com/brayschurman/welbi";
 
   try {
+    console.log("Sending repository link...");
     const response: { data: unknown } = await axios.post(
       "https://welbi.org/api/finish",
       { url: repositoryUrl },
       {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${session.user.token}`,
         },
       },
     );
+    console.log("Repository link sent successfully. Response:", response.data);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -152,6 +159,9 @@ const sendRepositoryLink = async (): Promise<unknown> => {
         "Error occurred while sending repository link:",
         error.message,
       );
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error details:", error.response?.data);
+      }
     }
     throw error;
   }
