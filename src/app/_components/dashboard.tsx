@@ -2,9 +2,9 @@
 
 import { format } from "date-fns";
 import Link from "next/link";
-import { Program } from "~/schema/welbi.schema";
 import { api } from "~/trpc/react";
 
+import type { Program } from "~/schema/welbi.schema";
 export default function Dashboard() {
   const {
     data: programs,
@@ -33,6 +33,7 @@ export default function Dashboard() {
         {upcomingPrograms.map((program: Program) => {
           return (
             <Link
+              key={program.id}
               className="cursor-pointer font-bold text-blue-500 hover:text-blue-400 dark:text-blue-300 dark:hover:text-blue-300"
               href={{
                 pathname: `/programs/${program.id}`,

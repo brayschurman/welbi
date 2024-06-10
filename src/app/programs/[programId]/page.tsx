@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Resident } from "~/schema/welbi.schema";
+import { type Resident } from "~/schema/welbi.schema";
 import { api } from "~/trpc/react";
 import { format } from "date-fns";
 
-export default function ProgramDetails({}: {}) {
+export default function ProgramDetails() {
   const searchParams = useSearchParams();
   const params = Object.fromEntries(searchParams);
 
@@ -26,7 +26,8 @@ export default function ProgramDetails({}: {}) {
 
   const programResidents = residents.filter((resident: Resident) =>
     resident.attendance.some(
-      (att) => Number(att.programId) === Number(params.programId),
+      (att: { programId: number }) =>
+        Number(att.programId) === Number(params.programId),
     ),
   );
 
@@ -48,7 +49,7 @@ export default function ProgramDetails({}: {}) {
             Start
           </h2>
           <p className="text-gray-500 dark:text-gray-400">
-            {format(new Date(params.programStart), "MMMM d, yyyy h:mm a")}
+            {format(new Date(params.programStart!), "MMM dd, yyyy")}
           </p>
         </div>
         <div>
@@ -75,12 +76,6 @@ export default function ProgramDetails({}: {}) {
                 >
                   Name
                 </th>
-                {/* <th
-                scope="col"
-                className="p-4 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400"
-              >
-                Preferred Name
-              </th> */}
                 <th
                   scope="col"
                   className="p-4 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400"
@@ -121,9 +116,6 @@ export default function ProgramDetails({}: {}) {
                       {resident.firstName} {resident.lastName}
                     </Link>
                   </td>
-                  {/* <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                  {resident.preferredName}
-                </td> */}
                   <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
                     <div className="flex items-center">
                       <div

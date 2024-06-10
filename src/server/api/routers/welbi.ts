@@ -1,11 +1,12 @@
 import axios from "axios";
 import { z } from "zod";
 import {
-  CreateProgram,
-  CreateResident,
-  Program,
+  type CreateProgram,
   createProgramSchema,
+  type CreateResident,
   createResidentSchema,
+  type Program,
+  type Resident,
 } from "~/schema/welbi.schema";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { getServerAuthSession } from "~/server/auth";
@@ -16,23 +17,26 @@ const fetchResidents = async () => {
     throw new Error("No token specified");
   }
 
-  const response = await axios.get("https://welbi.org/api/residents", {
-    headers: {
-      Authorization: `Bearer ${session.user.token}`,
+  const response: { data: Resident[] } = await axios.get(
+    "https://welbi.org/api/residents",
+    {
+      headers: {
+        Authorization: `Bearer ${session.user.token}`,
+      },
     },
-  });
+  );
 
   return response.data;
 };
 
-const createResident = async (resident: CreateResident) => {
+const createResident = async (resident: CreateResident): Promise<Resident> => {
   const session = await getServerAuthSession();
   if (!session?.user?.token) {
     throw new Error("No token specified");
   }
 
   try {
-    const response = await axios.post(
+    const response: { data: Resident } = await axios.post(
       "https://welbi.org/api/residents",
       resident,
       {
@@ -43,50 +47,46 @@ const createResident = async (resident: CreateResident) => {
     );
 
     return response.data;
-  } catch (error) {
-    console.error(
-      "Error occurred while creating resident:",
-      error.response.data,
-    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error occurred while creating resident:", error.message);
+    }
     throw error;
   }
 };
-const fetchPrograms = async () => {
+
+const fetchPrograms = async (): Promise<Program[]> => {
   const session = await getServerAuthSession();
   if (!session?.user?.token) {
     throw new Error("No token specified");
   }
 
-  const response = await axios.get("https://welbi.org/api/programs", {
-    headers: {
-      Authorization: `Bearer ${session.user.token}`,
+  const response: { data: Program[] } = await axios.get(
+    "https://welbi.org/api/programs",
+    {
+      headers: {
+        Authorization: `Bearer ${session.user.token}`,
+      },
     },
-  });
+  );
 
   const programs = response.data;
 
-  // Sort the programs by start date
   programs.sort((a: Program, b: Program) => {
     return new Date(a.start).getTime() - new Date(b.start).getTime();
   });
 
-  //filter out the programs that have already passed
-  // const now = new Date();
-  // const filteredPrograms = programs.filter((program: Program) => {
-  //   return new Date(program.start).getTime() >= now.getTime();
-  // });
-
   return programs;
 };
 
-const createProgram = async (program: CreateProgram) => {
+const createProgram = async (program: CreateProgram): Promise<Program> => {
   const session = await getServerAuthSession();
   if (!session?.user?.token) {
     throw new Error("No token specified");
   }
 
   try {
-    const response = await axios.post(
+    const response: { data: Program } = await axios.post(
       "https://welbi.org/api/programs",
       program,
       {
@@ -97,11 +97,10 @@ const createProgram = async (program: CreateProgram) => {
     );
 
     return response.data;
-  } catch (error) {
-    console.error(
-      "Error occurred while creating program:",
-      error.response.data,
-    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error occurred while creating program:", error.message);
+    }
     throw error;
   }
 };
@@ -113,7 +112,7 @@ const attendProgram = async (programId: number, residentId: number) => {
   }
 
   try {
-    const response = await axios.post(
+    const response: { data: unknown } = await axios.post(
       `https://welbi.org/api/programs/${programId}/attend`,
       { residentId, status: "Active" },
       {
@@ -124,11 +123,11 @@ const attendProgram = async (programId: number, residentId: number) => {
     );
 
     return response.data;
-  } catch (error) {
-    console.error(
-      "Error occurred while attending program:",
-      error.response.data,
-    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error occurred while attending program:", error.message);
+    }
+
     throw error;
   }
 };
@@ -150,7 +149,6 @@ export const welbiRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       return await createProgram(input);
     }),
-
   attendProgram: protectedProcedure
     .input(z.object({ programId: z.number(), residentId: z.number() }))
     .mutation(async ({ input }) => {

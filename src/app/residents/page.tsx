@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "~/trpc/react";
-import { Resident } from "../../schema/welbi.schema";
+import { type Resident } from "../../schema/welbi.schema";
 import Link from "next/link";
 
 export default function Residents() {
@@ -44,12 +44,6 @@ export default function Residents() {
                 >
                   Name
                 </th>
-                {/* <th
-                scope="col"
-                className="p-4 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400"
-              >
-                Preferred Name
-              </th> */}
                 <th
                   scope="col"
                   className="p-4 text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400"
@@ -90,9 +84,6 @@ export default function Residents() {
                       {resident.firstName} {resident.lastName}
                     </Link>
                   </td>
-                  {/* <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                  {resident.preferredName}
-                </td> */}
                   <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
                     <div className="flex items-center">
                       <div

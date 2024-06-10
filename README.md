@@ -10,9 +10,10 @@ I've bootstrapped this project with [T3 Stack](https://create.t3.gg/) to save ti
 - [x] Change API call to useQuery
 - [x] Display a list of programs
 - [x] Ability to add a new resident
-- [] Ability to add a new program
-- [] Ability to add a resident to a program
-- [] Dashboard view of today's activities
+- [x] Ability to add a new program
+- [x] Ability to add a resident to a program
+- [x] Dashboard view of upcoming activities
+- [x] Successful build and deploy
 - [] remove unused packages and comments
 
 ### Later

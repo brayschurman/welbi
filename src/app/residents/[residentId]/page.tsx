@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Program } from "~/schema/welbi.schema";
+import { type Program } from "~/schema/welbi.schema";
 import { api } from "~/trpc/react";
 import { format } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 
-export default function ProgramDetails({}: {}) {
+export default function ProgramDetails() {
   const searchParams = useSearchParams();
   const params = Object.fromEntries(searchParams);
 
@@ -15,7 +15,7 @@ export default function ProgramDetails({}: {}) {
 
   const attendProgram = api.welbi.attendProgram.useMutation({
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      void queryClient.invalidateQueries();
     },
   });
 
@@ -47,13 +47,15 @@ export default function ProgramDetails({}: {}) {
 
   const residentPrograms = programs.filter((program: Program) =>
     program.attendance.some(
-      (att) => Number(att.residentId) === Number(params.residentId),
+      (att: { residentId: number }) =>
+        Number(att.residentId) === Number(params.residentId),
     ),
   );
 
   const availablePrograms = programs.filter((program: Program) =>
     program.attendance.every(
-      (att) => Number(att.residentId) !== Number(params.residentId),
+      (att: { residentId: number }) =>
+        Number(att.residentId) !== Number(params.residentId),
     ),
   );
 

@@ -2,7 +2,7 @@
 
 import { format } from "date-fns";
 import Link from "next/link";
-import { Program } from "~/schema/welbi.schema";
+import { type Program } from "~/schema/welbi.schema";
 import { api } from "~/trpc/react";
 
 export default function Programs() {

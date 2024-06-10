@@ -1,13 +1,10 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import {
-  getServerSession,
-  type DefaultSession,
-  type NextAuthOptions,
-} from "next-auth";
+import { type DefaultSession, getServerSession, type NextAuthOptions } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
 import CredentialsProvider from "next-auth/providers/credentials";
-
 import { db } from "~/server/db";
+
+import { PrismaAdapter } from "@auth/prisma-adapter";
+
 import { fetchUserByEmailAndPassword } from "./api/trpc";
 
 /**
@@ -48,6 +45,9 @@ interface Session {
     token: string;
   };
 }
+interface ResponseData {
+  token: string;
+}
 
 async function fetchAuthToken(email: string): Promise<string | null> {
   const response = await fetch("https://welbi.org/api/start", {
@@ -57,7 +57,8 @@ async function fetchAuthToken(email: string): Promise<string | null> {
   });
 
   if (response.ok) {
-    const data = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const data: ResponseData = await response.json();
     return data.token;
   }
 
@@ -71,7 +72,7 @@ async function fetchAuthToken(email: string): Promise<string | null> {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    // @ts-ignore
+    // @ts-expect-error todo again...
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token) {
         session.user = {
@@ -110,7 +111,8 @@ export const authOptions: NextAuthOptions = {
           placeholder: "your-email@example.com",
         },
       },
-      async authorize(credentials, req) {
+      // @ts-expect-error todo...
+      async authorize(credentials) {
         if (credentials) {
           const user = await fetchUserByEmailAndPassword(credentials.email);
           if (user) {
@@ -126,10 +128,6 @@ export const authOptions: NextAuthOptions = {
         return null;
       },
     }),
-    // DiscordProvider({
-    //   clientId: env.DISCORD_CLIENT_ID,
-    //   clientSecret: env.DISCORD_CLIENT_SECRET,
-    // }),
 
     /**
      * ...add more providers here.
