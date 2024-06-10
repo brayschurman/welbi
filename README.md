@@ -17,6 +17,7 @@ I've bootstrapped this project with [T3 Stack](https://create.t3.gg/) to save ti
 
 ### Later
 
+- [] Typesafe forms, select inputs
 - [] Datefns for date formatting
 - [] Filter residents list
 - [] Filter programs list

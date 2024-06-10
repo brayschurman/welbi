@@ -1,28 +1,9 @@
 "use client";
 
+import { format } from "date-fns";
 import Link from "next/link";
+import { Program } from "~/schema/welbi.schema";
 import { api } from "~/trpc/react";
-
-interface Program {
-  allDay: boolean;
-  applicantId: number | null;
-  attendance: any[];
-  createdAt: string;
-  dimension: string;
-  end: string;
-  facilitators: string[];
-  hobbies: string[];
-  id: number;
-  isRepeated: boolean;
-  levelOfCare: string[];
-  location: string;
-  name: string;
-  parentId: number | null;
-  recurrence: any;
-  start: string;
-  tags: string[];
-  updatedAt: string;
-}
 
 export default function Programs() {
   const {
@@ -38,8 +19,6 @@ export default function Programs() {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
-  console.log(programs);
 
   return (
     <div className="ml-64 overflow-x-auto py-20">
@@ -93,11 +72,25 @@ export default function Programs() {
                   className="hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                    {program.name}
+                    <Link
+                      className="cursor-pointer font-bold text-blue-500 hover:text-blue-400 dark:text-blue-300 dark:hover:text-blue-300"
+                      href={{
+                        pathname: `/programs/${program.id}`,
+                        query: {
+                          programId: program.id,
+                          programName: program.name,
+                          programStart: program.start,
+                          programLocation: program.location,
+                          programAttendance: program.attendance.length,
+                        },
+                      }}
+                    >
+                      {program.name}
+                    </Link>
                   </td>
 
                   <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                    {program.start}
+                    {format(new Date(program.start), "MMMM do, yyyy, h:mm a")}
                   </td>
                   <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
                     {program.location}

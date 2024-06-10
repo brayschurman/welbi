@@ -32,3 +32,41 @@ export const createResidentSchema = z.object({
   moveInDate: z.string().min(2).max(40),
 });
 export type CreateResident = z.TypeOf<typeof createResidentSchema>;
+
+export const readProgramSchema = z.object({
+  id: z.number(),
+  parentId: z.number().nullable(),
+  name: z.string().min(2).max(40),
+  location: z.string().min(2).max(40),
+  allDay: z.boolean(),
+  start: z.string().min(2).max(40),
+  end: z.string().min(2).max(40),
+  tags: z.array(z.string()),
+  createdAt: z.string().min(2).max(40),
+  updatedAt: z.string().min(2).max(40),
+  dimension: z.string().min(2).max(40),
+  facilitators: z.array(z.string()),
+  levelOfCare: z.array(z.string()),
+  hobbies: z.array(z.string()),
+  recurrence: z.any(),
+  isRepeated: z.boolean(),
+  applicantId: z.number().nullable(),
+  attendance: z.array(z.any()),
+});
+export type Program = z.TypeOf<typeof readProgramSchema>;
+
+export const createProgramSchema = z.object({
+  name: z.string().min(2).max(40),
+  location: z.string().min(2).max(40),
+  allDay: z.boolean(),
+  start: z.string().min(2).max(40),
+  end: z.string().min(2).max(40),
+  tags: z.array(z.string()),
+  dimension: z.string().min(2).max(40),
+  facilitators: z.array(z.string()),
+  levelOfCare: z.array(z.string()),
+  hobbies: z.array(z.string()),
+  recurrence: z.any(),
+  isRepeated: z.boolean(),
+});
+export type CreateProgram = z.TypeOf<typeof createProgramSchema>;
