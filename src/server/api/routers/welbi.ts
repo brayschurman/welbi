@@ -132,6 +132,31 @@ const attendProgram = async (programId: number, residentId: number) => {
   }
 };
 
+const sendRepositoryLink = async () => {
+  const repositoryUrl = "https://github.com/brayschurman/welbi";
+
+  try {
+    const response: { data: unknown } = await axios.post(
+      "https://welbi.org/api/finish",
+      { url: repositoryUrl },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(
+        "Error occurred while sending repository link:",
+        error.message,
+      );
+    }
+    throw error;
+  }
+};
+
 export const welbiRouter = createTRPCRouter({
   fetchResidents: protectedProcedure.query(async () => {
     return await fetchResidents();
@@ -154,4 +179,7 @@ export const welbiRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       return await attendProgram(input.programId, input.residentId);
     }),
+  sendRepositoryLink: protectedProcedure.mutation(async () => {
+    return await sendRepositoryLink();
+  }),
 });
