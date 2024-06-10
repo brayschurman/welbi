@@ -4,6 +4,8 @@ This project uses Welbi's API to display a list of residents and their respectiv
 
 I've bootstrapped this project with [T3 Stack](https://create.t3.gg/) to save time on setting up the project. I was keen trying out the new App router from NextJS.
 
+![Bray's Welbi](public/welbi_bray.png)
+
 ## Todo
 
 - [x] Display a list of residents
