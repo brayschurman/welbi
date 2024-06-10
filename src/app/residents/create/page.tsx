@@ -6,26 +6,28 @@ import { api } from "~/trpc/react";
 
 export default function CreateResident() {
   const router = useRouter();
-  // const [firstName, setFirstName] = useState("");
-  // const [lastName, setLastName] = useState("");
-  // const [preferredName, setPreferredName] = useState("");
-  // const [room, setRoom] = useState("");
-  // const [levelOfCare, setLevelOfCare] = useState("");
-  // const [status, setStatus] = useState("");
-  // const [ambulation, setAmbulation] = useState("");
-  // const [birthDate, setBirthDate] = useState("");
-  // const [moveInDate, setMoveInDate] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState("");
+  const [preferredName, setPreferredName] = useState("");
+  const [room, setRoom] = useState("");
+  const [levelOfCare, setLevelOfCare] = useState("");
+  const [status, setStatus] = useState("");
+  const [ambulation, setAmbulation] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [moveInDate, setMoveInDate] = useState("");
 
-  const [firstName, setFirstName] = useState("Johnny");
-  const [lastName, setLastName] = useState("Doe");
-  const [name, setName] = useState("Johnny Doe");
-  const [preferredName, setPreferredName] = useState("John");
-  const [room, setRoom] = useState("222");
-  const [levelOfCare, setLevelOfCare] = useState("INDEPENDENT");
-  const [status, setStatus] = useState("HERE");
-  const [ambulation, setAmbulation] = useState("CANE");
-  const [birthDate, setBirthDate] = useState("1922-01-01");
-  const [moveInDate, setMoveInDate] = useState("2022-01-02");
+  // for testing
+  // const [firstName, setFirstName] = useState("Johnny");
+  // const [lastName, setLastName] = useState("Doe");
+  // const [name, setName] = useState("Johnny Doe");
+  // const [preferredName, setPreferredName] = useState("John");
+  // const [room, setRoom] = useState("222");
+  // const [levelOfCare, setLevelOfCare] = useState("INDEPENDENT");
+  // const [status, setStatus] = useState("HERE");
+  // const [ambulation, setAmbulation] = useState("CANE");
+  // const [birthDate, setBirthDate] = useState("1922-01-01");
+  // const [moveInDate, setMoveInDate] = useState("2022-01-02");
 
   const createResident = api.welbi.createResident.useMutation({
     onSuccess: () => {
@@ -49,19 +51,7 @@ export default function CreateResident() {
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
           Create Resident
         </h1>
-        {/* <Link
-          href="/residents/create"
-          className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        >
-          Create Resident
-        </Link> */}
       </div>
-      {/* <Link
-        href="/residents"
-        className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-      >
-        Back
-      </Link> */}
 
       <div className="inline-block min-w-full pt-4 align-middle">
         <form

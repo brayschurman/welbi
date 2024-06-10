@@ -14,7 +14,7 @@ I've bootstrapped this project with [T3 Stack](https://create.t3.gg/) to save ti
 - [x] Ability to add a resident to a program
 - [x] Dashboard view of upcoming activities
 - [x] Successful build and deploy
-- [] remove unused packages and comments
+- [x] remove unused packages and comments
 
 ### Later
 

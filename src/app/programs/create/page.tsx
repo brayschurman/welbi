@@ -7,20 +7,43 @@ import { api } from "~/trpc/react";
 export default function CreateProgram() {
   const router = useRouter();
 
-  const [name, setName] = useState("Swimming with Bob");
-  const [location, setLocation] = useState("Multipurpose Room");
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
   const [allDay, setAllDay] = useState(false);
-  const [start, setStart] = useState("2024-05-27T11:15:00.000Z");
-  const [end, setEnd] = useState("2024-05-27T12:00:00.000Z");
-  const [tags, setTags] = useState(["Fitness"]);
-  const [dimension, setDimension] = useState("Physical");
-  const [facilitators, setFacilitators] = useState(["Active Living Assistant"]);
-  const [levelOfCare, setLevelOfCare] = useState(["Independent"]);
-  const [hobbies, setHobbies] = useState([
-    "Stretching",
-    "Aerobics",
-    "Exercice",
-  ]);
+
+  const tomorrow = new Date();
+  const tomorrowString = tomorrow.toISOString();
+  const [start, setStart] = useState(tomorrowString);
+
+  const tomorrowNight = new Date();
+  tomorrowNight.setHours(tomorrowNight.getHours() + 3);
+  const tomorrowNightString = tomorrowNight.toISOString();
+  const [end, setEnd] = useState(tomorrowNightString);
+
+  console.log(tomorrowString);
+  console.log(tomorrowNightString);
+
+  const [tags, setTags] = useState([""]);
+  const [dimension, setDimension] = useState("");
+  const [facilitators, setFacilitators] = useState([""]);
+  const [levelOfCare, setLevelOfCare] = useState([""]);
+  const [hobbies, setHobbies] = useState([""]);
+
+  // ... for testing
+  // const [name, setName] = useState("Swimming with Bob");
+  // const [location, setLocation] = useState("Multipurpose Room");
+  // const [allDay, setAllDay] = useState(false);
+  // const [start, setStart] = useState("2024-05-27T11:15:00.000Z");
+  // const [end, setEnd] = useState("2024-05-27T12:00:00.000Z");
+  // const [tags, setTags] = useState(["Fitness"]);
+  // const [dimension, setDimension] = useState("Physical");
+  // const [facilitators, setFacilitators] = useState(["Active Living Assistant"]);
+  // const [levelOfCare, setLevelOfCare] = useState(["Independent"]);
+  // const [hobbies, setHobbies] = useState([
+  //   "Stretching",
+  //   "Aerobics",
+  //   "Exercice",
+  // ]);
 
   const createProgram = api.welbi.createProgram.useMutation({
     onSuccess: () => {
@@ -44,20 +67,7 @@ export default function CreateProgram() {
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
           Create Program
         </h1>
-        {/* <Link
-          href="/residents/create"
-          className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        >
-          Create Resident
-        </Link> */}
       </div>
-      {/* <Link
-        href="/residents"
-        className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-      >
-        Back
-      </Link> */}
-
       <div className="inline-block min-w-full pt-4 align-middle">
         <form
           onSubmit={(e) => {
@@ -121,7 +131,6 @@ export default function CreateProgram() {
             <input
               type="checkbox"
               id="all-day"
-              className="dark:shadow-sm-light block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               onChange={(e) => setAllDay(e.target.checked)}
               checked={allDay}
             />
