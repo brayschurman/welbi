@@ -1,4 +1,8 @@
-import { type DefaultSession, getServerSession, type NextAuthOptions } from "next-auth";
+import {
+  type DefaultSession,
+  getServerSession,
+  type NextAuthOptions,
+} from "next-auth";
 import { type Adapter } from "next-auth/adapters";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "~/server/db";
@@ -78,7 +82,7 @@ export const authOptions: NextAuthOptions = {
         session.user = {
           ...session.user,
           id: token.user.id,
-          token: token.token, // Add token to session
+          token: token.token,
         };
       }
       return session;

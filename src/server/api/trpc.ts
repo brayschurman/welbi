@@ -109,7 +109,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 
 // shortcircuit auth for demo purposes
 export async function fetchUserByEmailAndPassword(email: string) {
-  const whitelist = ["brayschurman@icloud.com", "brayschurman@gmail.com"];
+  const whitelist = ["brayschurman@icloud.com"];
   if (!whitelist.includes(email)) {
     return null;
   }
@@ -118,14 +118,6 @@ export async function fetchUserByEmailAndPassword(email: string) {
     return {
       id: 12345,
       name: "Bray",
-      email: email,
-    };
-  }
-
-  if (email === "brayschurman@gmail.com") {
-    return {
-      id: 54321,
-      name: "Brayden",
       email: email,
     };
   }
