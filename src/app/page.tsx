@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
@@ -24,6 +25,8 @@ export default async function Home() {
   const session = await getServerAuthSession();
 
   const residents = await api.welbi.fetchResidents();
+
+  
   // sort residents by name
   residents.sort((a: Resident, b: Resident) => {
     if (a.name < b.name) {
@@ -39,31 +42,28 @@ export default async function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b">
       <nav className="border-gray-200 bg-white dark:bg-gray-900">
         <div className="mx-auto flex max-w-screen-xl flex-wrap items-center space-x-4 p-4">
-          <img
+          <Image
             src="https://cdn.prod.website-files.com/5b7db1b8967d853207bb4b0e/614a16a6e48522e96d9d9460_welbi-logo-header.svg"
             className="h-8"
             alt="Welbi Logo"
+            width={200}
+            height={40}
           />
           <div className="hidden w-full md:block md:w-auto" id="navbar-default">
             <ul className="mt-4 flex flex-col rounded-lg border border-gray-100 bg-gray-50 p-4 font-medium md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:p-0 rtl:space-x-reverse dark:border-gray-700 dark:bg-gray-800 md:dark:bg-gray-900">
               <li></li>
               <li>
-                <p className="block rounded px-3 py-2 text-gray-900 hover:bg-gray-100 md:border-0 md:p-0  dark:text-white dark:hover:bg-gray-700 ">
+                <p className="block rounded px-3 py-2 text-gray-400 md:border-0 md:p-0  dark:text-white">
                   {session && <span>Logged in as {session.user?.name}</span>}
                 </p>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block rounded px-3 py-2 text-gray-900 hover:bg-gray-100 md:border-0 md:p-0  dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent md:dark:hover:text-blue-500"
+                <Link
+                  href={session ? "/api/auth/signout" : "/api/auth/signin"}
+                  className="rounded-full bg-white/10 px-10 py-3 text-gray-900 no-underline transition hover:bg-white/20"
                 >
-                  <Link
-                    href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                    className="rounded-full bg-white/10 px-10 py-3 text-gray-900 no-underline transition hover:bg-white/20"
-                  >
-                    {session ? "Sign out" : "Sign in"}
-                  </Link>
-                </a>
+                  {session ? "Sign out" : "Sign in"}
+                </Link>
               </li>
             </ul>
           </div>
@@ -190,7 +190,15 @@ export default async function Home() {
                         <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
                           <div className="flex items-center">
                             <div
-                              className={`mr-2 h-2.5 w-2.5 rounded-full ${resident.status === "HERE" ? "bg-green-400" : "bg-red-500"}`}
+                              className={`mr-2 h-2.5 w-2.5 rounded-full ${
+                                resident.status === "HERE"
+                                  ? "bg-green-400"
+                                  : resident.status === "ISOLATION"
+                                    ? "bg-orange-400"
+                                    : resident.status === "LOA"
+                                      ? "bg-blue-400"
+                                      : "bg-red-500"
+                              }`}
                             ></div>
                             {resident.status}
                           </div>
@@ -199,7 +207,21 @@ export default async function Home() {
                           {resident.room}
                         </td>
                         <td className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                          {resident.levelOfCare}
+                          <div
+                            className={`inline-block rounded-full px-2 py-1  ${
+                              resident.levelOfCare === "MEMORY"
+                                ? "bg-purple-200"
+                                : resident.levelOfCare === "INDEPENDENT"
+                                  ? "bg-green-200"
+                                  : resident.levelOfCare === "ASSISTED"
+                                    ? "bg-yellow-200"
+                                    : resident.levelOfCare === "LONGTERM"
+                                      ? "bg-red-200"
+                                      : "bg-gray-200"
+                            }`}
+                          >
+                            {resident.levelOfCare}
+                          </div>
                         </td>
                       </tr>
                     ))}

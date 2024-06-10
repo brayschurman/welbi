@@ -41,13 +41,6 @@ interface JWT {
   token: string;
 }
 
-interface Token {
-  user: {
-    id: string;
-  };
-  token: string;
-}
-
 interface Session {
   user: {
     id: string;

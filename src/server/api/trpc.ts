@@ -107,25 +107,26 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   });
 });
 
-// This is an example. Replace it with your own user fetching logic.
+// shortcircuit auth for demo purposes
 export async function fetchUserByEmailAndPassword(email: string) {
-  if (email !== "brayschurman@icloud.com") {
+  const whitelist = ["brayschurman@icloud.com", "brayschurman@gmail.com"];
+  if (!whitelist.includes(email)) {
     return null;
   }
 
-  const user = {
-    id: 12345,
-    name: "Bray",
-    email: "brayschurman@icloud.com",
-  };
-
-  if (!user) {
-    return null;
+  if (email === "brayschurman@icloud.com") {
+    return {
+      id: 12345,
+      name: "Bray",
+      email: email,
+    };
   }
 
-  return {
-    id: user.email,
-    name: user.name,
-    email: user.email,
-  };
+  if (email === "brayschurman@gmail.com") {
+    return {
+      id: 54321,
+      name: "Brayden",
+      email: email,
+    };
+  }
 }

@@ -7,5 +7,9 @@ I've bootstrapped this project with [T3 Stack](https://create.t3.gg/) to save ti
 ## Todo
 
 - [x] Display a list of residents
+- [] Change API call to useQuery
 - [] Display a list of programs
+- [] Ability to add a new resident
+- [] Ability to add a new program
+- [] Ability to add a resident to a program
 - [] Filter residents list
