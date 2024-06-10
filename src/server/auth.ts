@@ -11,6 +11,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "~/env";
 import { db } from "~/server/db";
 import { fetchUserByEmailAndPassword } from "./api/trpc";
+import { Session } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -36,6 +37,27 @@ declare module "next-auth" {
     // role: UserRole;
   }
 }
+interface JWT {
+  user: {
+    id: string;
+  };
+  token: string;
+}
+
+interface Token {
+  user: {
+    id: string;
+  };
+  token: string;
+}
+
+interface Session {
+  user: {
+    id: string;
+    email: string;
+    token: string;
+  };
+}
 
 async function fetchAuthToken(email: string): Promise<string | null> {
   const response = await fetch("https://welbi.org/api/start", {
@@ -59,7 +81,8 @@ async function fetchAuthToken(email: string): Promise<string | null> {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    async session({ session, token }) {
+    // @ts-ignore
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (token) {
         session.user = {
           ...session.user,
