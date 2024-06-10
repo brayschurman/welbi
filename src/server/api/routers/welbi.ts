@@ -132,7 +132,7 @@ const attendProgram = async (programId: number, residentId: number) => {
   }
 };
 
-const sendRepositoryLink = async () => {
+const sendRepositoryLink = async (): Promise<unknown> => {
   const repositoryUrl = "https://github.com/brayschurman/welbi";
 
   try {

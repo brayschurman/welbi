@@ -12,6 +12,17 @@ export default function Dashboard() {
     isPending,
   } = api.welbi.fetchPrograms.useQuery();
 
+  const submitCode = api.welbi.sendRepositoryLink.useMutation({
+    onSuccess: (data) => {
+      console.log("Response from finish endpoint:", data);
+      alert("Repository link sent successfully!");
+    },
+    onError: (error) => {
+      console.error("Error sending repository link:", error.message);
+      alert("Error sending repository link");
+    },
+  });
+
   if (isPending) {
     return <div>Loading...</div>;
   }
@@ -64,6 +75,14 @@ export default function Dashboard() {
           );
         })}
       </div>
+      <button
+        className="fixed bottom-10 right-10 rounded-full bg-white/10 px-10 py-3 text-gray-900 no-underline transition hover:bg-white/20"
+        onClick={() => {
+          submitCode.mutate();
+        }}
+      >
+        ✅ Finish
+      </button>
     </div>
   );
 }

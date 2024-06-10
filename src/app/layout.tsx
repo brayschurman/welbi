@@ -2,7 +2,7 @@ import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
 
-import { api, TRPCReactProvider } from "~/trpc/react";
+import { TRPCReactProvider } from "~/trpc/react";
 import Image from "next/image";
 import Link from "next/link";
 import { getServerAuthSession } from "~/server/auth";
@@ -19,17 +19,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerAuthSession();
-
-  const submitCode = api.welbi.sendRepositoryLink.useMutation({
-    onSuccess: (data) => {
-      console.log("Response from finish endpoint:", data);
-      alert("Repository link sent successfully!");
-    },
-    onError: (error) => {
-      console.error("Error sending repository link:", error.message);
-      alert("Error sending repository link");
-    },
-  });
 
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
@@ -67,16 +56,6 @@ export default async function RootLayout({
                       >
                         {session ? "Sign out" : "Sign in"}
                       </Link>
-                    </li>
-                    <li>
-                      <button
-                        className="rounded-full bg-white/10 px-10 py-3 text-gray-900 no-underline transition hover:bg-white/20"
-                        onClick={() => {
-                          submitCode.mutate();
-                        }}
-                      >
-                        ✅ Finish
-                      </button>
                     </li>
                   </ul>
                 </div>
